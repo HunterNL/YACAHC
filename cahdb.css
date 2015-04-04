@@ -1,0 +1,22 @@
+/* CSS declarations go here */
+.cardsetselection {
+	display: inline-block;
+	height: 1.2em;
+	border: 1px solid #333;
+	border-radius: 5px;
+	padding: 2px;
+	margin: 2px;
+	font-family: "Roboto";
+	color: #666;
+	background-color: #ccc;
+	transition: color .4s, background-color .4s
+}
+
+.cardsetselection.active {
+	color: #fff;
+	background-color: #00F;
+}
+
+.cardsetselection.admin {
+	cursor: pointer;
+}

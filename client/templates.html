@@ -1,0 +1,28 @@
+<template name="home">
+	Home
+</template>
+
+<template name="loading">
+	Loading
+</template>
+
+<template name="room">
+	{{#if in_setup}}
+		{{>cardsetselection}}
+		{{#if is_admin}}
+			<button>Start</button>
+		{{else}}
+			<h3>Waiting for admin to start</h3>
+		{{/if}}
+	{{/if}}
+</template>
+
+<template name="cardsetselection">
+	{{#each cardsets}}
+		{{>cardselection_card}}
+	{{/each}}
+</template>
+
+<template name="cardselection_card">
+	<div class="cardsetselection {{activeClass}} {{adminClass}}">{{name}}</div>
+</template>
