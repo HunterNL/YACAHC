@@ -6,6 +6,7 @@ Meteor.publish("room_single",function(roomId){
 	return Rooms.find(roomId);
 });
 
+//All users in the given room
 Meteor.publish("room_users",function(roomId){
 	return Meteor.users.find({
 		room: roomId
@@ -14,6 +15,7 @@ Meteor.publish("room_users",function(roomId){
 	});
 });
 
+//All cards used in given room
 Meteor.publish("room_cards",function(roomId){
 
 	if(!roomId) {
@@ -36,10 +38,11 @@ Meteor.publish("room_cards",function(roomId){
 
 });
 
+//Publish custom user data
 Meteor.publish(null,function(){
 	return Meteor.users.find(this.userid,{
 		fields : userFields
-	}); //Make sure to publish custom data
+	});
 });
 
 Meteor.publish("cardsets_all",function(){

@@ -10,6 +10,7 @@ Router.route("/room/:roomId",function(){
 	console.log("Running room route",this.params);
 	var roomId = (this.params.roomId);
 
+	//TODO Minimize reruns
 	//If theres no id given, return to homepage //TODO: Make room instead
 	if(!roomId) {
 		console.log("No roomID, going home");
@@ -19,6 +20,7 @@ Router.route("/room/:roomId",function(){
 
 	this.wait(Meteor.subscribe("room_single",roomId));
 	this.wait(Meteor.subscribe("room_users",roomId));
+	//TODO: Don't wait, show fancy animations
 
 	if(this.ready()) {
 		var room = Rooms.findOne(roomId);
@@ -27,6 +29,7 @@ Router.route("/room/:roomId",function(){
 		if(!room) {
 			//If theres no room, make a new one
 			Meteor.call("roomCreate",roomId);
+			this.render("loading")
 		} else {
 
 			//Add user if user not in room

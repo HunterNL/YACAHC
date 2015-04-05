@@ -79,6 +79,9 @@ Meteor.methods({
 			});
 		}
 
+		updateUserDate(this.userId);
+		updateRoomDate(roomId);
+
 	}, //End of roomToggleCardSet
 
 
@@ -102,6 +105,7 @@ Meteor.methods({
 			});
 
 			updateRoomDate(room._id);
+			updateUserDate(this.userId);
 		} else {
 			console.warn("Room tried to start while already playing");
 		}

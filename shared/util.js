@@ -8,6 +8,7 @@ Utils = (function(){ //module pattern
 		}).count() > 0);
 	};
 
+	//Get room object from currentlly logged in user
 	this.getRoomFromCurrentUser = function() {
 		var roomId = Meteor.user().room;
 		if(!roomId) {return;} //If no roomID, return nil;

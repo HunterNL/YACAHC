@@ -25,16 +25,12 @@ Template.room.events({
 	}
 });
 
-
-Template.cardsetselection.onCreated(function(){
-	this.subscribe("cardsets_all");
-});
-
 Template.playingfield.onCreated(function(){
 	var room = Template.currentData();
 	this.subscribe("room_cards",room._id);
 });
 
+//a = answer = white, q=question=black
 Template.playingfield.helpers({
 	white_cards : function(){
 		return Cards.find({type:"a"});
@@ -43,6 +39,11 @@ Template.playingfield.helpers({
 	black_cards : function(){
 		return Cards.find({type:"q"});
 	}
+});
+
+//When showing cardset selection, subscribe to all cardssets
+Template.cardsetselection.onCreated(function(){
+	this.subscribe("cardsets_all");
 });
 
 Template.cardsetselection.helpers({
