@@ -30,3 +30,39 @@
 .cardsetselection.admin:hover {
 	background-color : #9cb1ef;
 }
+
+.card {
+	position: relative;
+	display: inline-block;
+	font-size: 1.5em;
+	font-family: Roboto,sans-sarif;
+	width: 200px;
+	height: 320px;
+	vertical-align: top;
+	margin: 10px;
+
+	/*Border on both for identical size*/
+	border: 1px solid black;
+	border-radius: 5px;
+}
+
+.card.a {
+	/*Rules specific to white cards*/
+}
+
+.card.q {
+	background-color: #151515;
+	color: white;
+}
+
+.card .text {
+	margin: 5px 5px;
+}
+
+.card .tag {
+	vertical-align: bottom;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	margin: 5px 5px;
+}
