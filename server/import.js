@@ -26,18 +26,24 @@ function importCards(url) {
 		if(data.hasOwnProperty(key)) {
 			var cardset = data[key];
 
-			CardSets.insert({
-				_id : key,
-				name: cardset.name,
-				icon: cardset.icon
-			})
-
 			var cardset_black = cardset.black;
 			var cardset_white = cardset.white;
 
-			for(var i=0;i<cardset_black.length;i++) {
-				var cardId = cardset_black[i]
-				var card = blackcards[cardId];
+			CardSets.insert({
+				_id : key,
+				name: cardset.name,
+				icon: cardset.icon,
+				black_count: cardset_black.length,
+				white_count: cardset_white.length
+			});
+			
+			var cardId;
+			var card;
+			var i;
+
+			for(i=0;i<cardset_black.length;i++) {
+				cardId = cardset_black[i];
+				card = blackcards[cardId];
 
 				Cards.insert({
 					text: card.text,
@@ -47,9 +53,9 @@ function importCards(url) {
 				});
 			}
 
-			for(var i=0;i<cardset_white.length;i++){
-				var cardId = cardset_white[i];
-				var card = whitecards[cardId];
+			for(i=0;i<cardset_white.length;i++){
+				cardId = cardset_white[i];
+				card = whitecards[cardId];
 
 				Cards.insert({
 					text: card,
