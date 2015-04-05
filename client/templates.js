@@ -2,7 +2,12 @@ Template.room.helpers({
 	in_setup : function(){
 		var room = Template.currentData();
 
-		return room.state === "setup";
+		return (room.state === "setup");
+	},
+
+	in_game : function(){
+		var room = Template.currentData();
+		return (room.state === "playing");
 	},
 
 	is_admin : function() {
@@ -14,13 +19,30 @@ Template.room.helpers({
 	}
 });
 
+Template.room.events({
+	"click [data-intent=game_start]" : function(e,tmp) {
+		Meteor.call("roomStartGame");
+	}
+});
+
 
 Template.cardsetselection.onCreated(function(){
 	this.subscribe("cardsets_all");
 });
 
 Template.playingfield.onCreated(function(){
-	this.subscribe("room_cards");
+	var room = Template.currentData();
+	this.subscribe("room_cards",room._id);
+});
+
+Template.playingfield.helpers({
+	white_cards : function(){
+		return Cards.find({type:"a"});
+	},
+
+	black_cards : function(){
+		return Cards.find({type:"q"});
+	}
 });
 
 Template.cardsetselection.helpers({

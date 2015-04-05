@@ -43,6 +43,9 @@ Meteor.methods({
 	//Add current user to given room
 	roomAddUser : function(roomId) {
 		if(!Utils.roomContainsUser(roomId,this.userId)) {
+
+			console.log("Adding user",this.userId,"to room",roomId);
+
 			Meteor.users.update(this.userId,{
 				$set : {
 					room: roomId,

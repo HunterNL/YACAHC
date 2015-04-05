@@ -10,7 +10,7 @@
 	{{#if in_setup}}
 		{{>cardsetselection}}
 		{{#if is_admin}}
-			<button>Start</button>
+			<button data-intent="game_start">Start</button>
 		{{else}}
 			<h3>Waiting for admin to start</h3>
 		{{/if}}
@@ -37,5 +37,13 @@
 </template>
 
 <template name="playingfield">
+<h2>White cards</h2>
+{{#each white_cards}}
+	{{text}}
+{{/each}}
 
+<h2>Black cards</h2>
+{{#each black_cards}}
+	{{text}}
+{{/each}}
 </template>

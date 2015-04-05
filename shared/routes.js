@@ -7,7 +7,7 @@ Router.route("/",function(){
 
 //Main room route
 Router.route("/room/:roomId",function(){
-	console.log("Running room route");
+	console.log("Running room route",this.params);
 	var roomId = (this.params.roomId);
 
 	//If theres no id given, return to homepage //TODO: Make room instead
@@ -22,6 +22,7 @@ Router.route("/room/:roomId",function(){
 
 	if(this.ready()) {
 		var room = Rooms.findOne(roomId);
+		console.log("Got room",room);
 
 		if(!room) {
 			//If theres no room, make a new one
@@ -30,6 +31,7 @@ Router.route("/room/:roomId",function(){
 
 			//Add user if user not in room
 			if(!Utils.roomContainsUser(roomId,Meteor.userId())) {
+				console.log("Adding user to room");
 				Meteor.call("roomAddUser",roomId);
 			} else {
 				//We're ready, got a room and all relevant data and we've added the user, render the room!
