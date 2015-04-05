@@ -15,6 +15,15 @@
 			<h3>Waiting for admin to start</h3>
 		{{/if}}
 	{{/if}}
+
+	{{#if in_game}}
+		{{>playingfield}}
+
+
+	{{/if}}
+
+	Card count : {{card_count}}
+
 </template>
 
 <template name="cardsetselection">
@@ -24,5 +33,9 @@
 </template>
 
 <template name="cardselection_card">
-	<div class="cardsetselection {{activeClass}} {{adminClass}}">{{name}}</div>
+	<input type="button" class="cardsetselection {{activeClass}} {{adminClass}}" value={{name}}>
+</template>
+
+<template name="playingfield">
+
 </template>

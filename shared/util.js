@@ -8,5 +8,17 @@ Utils = (function(){ //module pattern
 		}).count() > 0);
 	};
 
+	this.getRoomFromCurrentUser = function() {
+		var roomId = Meteor.user().room;
+		if(!roomId) {return;} //If no roomID, return nil;
+
+		var room = Rooms.findOne(roomId);
+		return room; //Can be nil if nothing found
+	};
+
+	this.currentUserIsRoomOwner = function(room){
+		return (room.owner === Meteor.userId());
+	};
+
 	return this;
 })(); //end of module

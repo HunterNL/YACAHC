@@ -15,6 +15,8 @@ function updateRoomDate(roomId) {
 	});
 }
 
+
+
 Meteor.methods({
 	//Create a new room with given ID
 	roomCreate : function(roomId) {
@@ -38,7 +40,7 @@ Meteor.methods({
 
 	},
 
-	//Add given user to given room
+	//Add current user to given room
 	roomAddUser : function(roomId) {
 		if(!Utils.roomContainsUser(roomId,this.userId)) {
 			Meteor.users.update(this.userId,{
@@ -53,14 +55,8 @@ Meteor.methods({
 	},
 
 	roomToggleCardSet : function(setId) {
-		var roomId = Meteor.user().room;
-		if(!roomId) {return;} //If no roomId, return
-
-		var room = Rooms.findOne(roomId);
-		if(!room) {return;} //If no roo,, return
-
-		//If user isn't owner, retrun
-		if(Meteor.userId() !== room.owner) {return;}
+		var room = Utils.getRoomFromCurrentUser();
+		var roomId = room._id;
 
 		if(room.cardsets.indexOf(setId) === -1) {
 			//If cardset ins't used, add it
@@ -68,7 +64,7 @@ Meteor.methods({
 				$push : {
 					cardsets : setId
 				}
-			})
+			});
 
 		} else {
 			//If cardset IS used, remove it
@@ -77,10 +73,37 @@ Meteor.methods({
 				$pull : {
 					cardsets: setId
 				}
-			})
+			});
 		}
 
-	} //End of roomToggleCardSet
+	}, //End of roomToggleCardSet
+
+
+	//Starts game if room is in setup
+	roomStartGame : function() {
+		var room = Utils.getRoomFromCurrentUser();
+		if(!room) {
+			throw new Meteor.Error("invalid_room_start","User without room tried to start a game",Meteor.user());
+		}
+
+		if(!Utils.currentUserIsRoomOwner(room)) {
+			throw new Meteor.Error("user_not_admin_startgame","User needs to be admin to start the game",Meteor.user());
+		}
+
+
+		if(room.state === "setup") {
+			Rooms.update(room._id,{
+				$set : {
+					state: "playing"
+				}
+			});
+
+			updateRoomDate(room._id);
+		} else {
+			console.warn("Room tried to start while already playing");
+		}
+
+	}
 
 
 

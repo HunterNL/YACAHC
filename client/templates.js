@@ -7,13 +7,20 @@ Template.room.helpers({
 
 	is_admin : function() {
 		return (Meteor.userId() === Template.currentData().owner);
-	}
+	},
 
+	card_count : function() {
+		return Cards.find().count();
+	}
 });
 
 
 Template.cardsetselection.onCreated(function(){
 	this.subscribe("cardsets_all");
+});
+
+Template.playingfield.onCreated(function(){
+	this.subscribe("room_cards");
 });
 
 Template.cardsetselection.helpers({
@@ -37,7 +44,7 @@ Template.cardselection_card.helpers({
 });
 
 Template.cardselection_card.events({
-	"click div" : function(e,tmp) {
+	"click .cardsetselection" : function(e,tmp) {
 		if(Meteor.userId() === Template.parentData().owner) {
 			Meteor.call("roomToggleCardSet",Template.currentData()._id);
 		}

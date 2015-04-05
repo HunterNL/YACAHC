@@ -1,7 +1,6 @@
 /* CSS declarations go here */
 .cardsetselection {
 	display: inline-block;
-	height: 1.2em;
 	border: 1px solid #333;
 	border-radius: 5px;
 	padding: 2px;
@@ -9,7 +8,8 @@
 	font-family: "Roboto";
 	color: #666;
 	background-color: #ccc;
-	transition: color .4s, background-color .4s
+	transition: color .4s, background-color .4s;
+	cursor: default;
 }
 
 .cardsetselection.active {
@@ -18,5 +18,15 @@
 }
 
 .cardsetselection.admin {
+	/*Make card selection look pressable to the owner of the room */
+	box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
 	cursor: pointer;
+}
+
+.cardsetselection.admin:focus {
+	/*TODO Nice focus effect*/
+	outline:0;
+}
+.cardsetselection.admin:hover {
+	background-color : #9cb1ef;
 }
