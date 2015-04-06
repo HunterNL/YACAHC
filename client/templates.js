@@ -32,12 +32,29 @@ Template.playingfield.onCreated(function(){
 
 //a = answer = white, q=question=black
 Template.playingfield.helpers({
+
+	//Find not discarded white (answer) cards
 	white_cards : function(){
-		return Cards.find({type:"a"});
+		var discarded_cards = Template.currentData().discarded_cards;
+
+		return Cards.find({
+			type:"a",
+			_id : {
+				$nin : discarded_cards
+			}
+		});
 	},
 
+	//Find not discared black (question) cards
 	black_cards : function(){
-		return Cards.find({type:"q"});
+		var discarded_cards = Template.currentData().discarded_cards;
+
+		return Cards.find({
+			type:"q",
+			_id : {
+				$nin : discarded_cards
+			}
+		});
 	}
 });
 
@@ -71,5 +88,12 @@ Template.cardselection_card.events({
 		if(Meteor.userId() === Template.parentData().owner) {
 			Meteor.call("roomToggleCardSet",Template.currentData()._id);
 		}
+	}
+});
+
+Template.card.events({
+	"click div" : function(e,tmp) {
+		var card = Template.currentData();
+		Meteor.call("cardDiscard",card._id) ;
 	}
 });

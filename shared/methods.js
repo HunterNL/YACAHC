@@ -31,7 +31,8 @@ Meteor.methods({
 			owner: this.userId,
 			date_created : new Date(),
 			state: "setup",
-			cardsets : []
+			cardsets : [],
+			discarded_cards : []
 		});
 
 		//Update user last activity date
@@ -110,6 +111,25 @@ Meteor.methods({
 			console.warn("Room tried to start while already playing");
 		}
 
+	},
+
+	cardDiscard : function(cardId) {
+		var room = Utils.getRoomFromCurrentUser();
+		if(!room) {
+			throw new Meteor.Error("user_not_in_room_discardcard","User needs to be in room to discard a card",this.userId);
+		}
+
+		if(!cardId) {
+			throw new Meter.Error("discardcard_no_id_specifiec","User did not give ID for discardcard",cardId);
+		}
+
+		Rooms.update(room._id,{
+			$addToSet : {discarded_cards : cardId} //Addtoset prevents duplicates, unlike push
+		});
+
+
+		updateUserDate(Meteor.userId());
+		updateRoomDate(room._id);
 	}
 
 
