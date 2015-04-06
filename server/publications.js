@@ -2,6 +2,10 @@ var userFields = {
 	room: 1
 };
 
+var privateUserFields = userFields;
+	privateUserFields.hand = 1;
+
+
 Meteor.publish("room_single",function(roomId){
 	return Rooms.find(roomId);
 });
@@ -41,7 +45,7 @@ Meteor.publish("room_cards",function(roomId){
 //Publish custom user data
 Meteor.publish(null,function(){
 	return Meteor.users.find(this.userid,{
-		fields : userFields
+		fields : privateUserFields
 	});
 });
 

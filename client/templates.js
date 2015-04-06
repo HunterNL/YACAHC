@@ -69,6 +69,15 @@ Template.cardsetselection.helpers({
 	}
 });
 
+Template.user_hand.helpers({
+	user_hand_cards : function() {
+		return Cards.find({
+			_id : {
+				$in : Meteor.user().hand
+			}
+		});
+	}
+});
 
 Template.cardselection_card.helpers({
 	activeClass : function() {

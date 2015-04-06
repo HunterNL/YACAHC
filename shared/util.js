@@ -21,5 +21,9 @@ Utils = (function(){ //module pattern
 		return (room.owner === Meteor.userId());
 	};
 
+	this.removeRandomElementFromArray = function(array) {
+		return array.splice(Math.floor(array.length * Math.random()),1)[0]; //one liner ahoy
+	};
+
 	return this;
 })(); //end of module

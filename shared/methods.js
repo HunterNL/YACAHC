@@ -1,3 +1,5 @@
+var INITIAL_HAND_SIZE = 10;
+
 //2 functions for easily updating last activity
 function updateUserDate(userId) {
 	Meteor.users.update(userId,{
@@ -15,6 +17,48 @@ function updateRoomDate(roomId) {
 	});
 }
 
+//Add card to room's blacklist effectivly removing card from possible cards to draw
+function discardCard(cardId,roomId) {
+	if(!cardId || !roomId) {throw new Meteor.Error("invalid_args_discardCard","Invalid arguments to discardCard",[cardId,roomId]);}
+	Rooms.update(roomId,{
+		$addToSet : {discarded_cards : cardId} //addtoset prevents duplicates, unlike push
+	});
+}
+
+//Deal a card to a user, also discard so its not drawn again
+function dealCard(cardId,userId,roomId) {
+	if(!cardId || !userId || !roomId) {throw new Meteor.Error("invalid_args_dealcard","Invalid arugments to dealcard",[cardId,userId,roomId]);}
+	Meteor.users.update(userId,{
+		$addToSet : {hand:cardId}
+	});
+
+	discardCard(cardId,roomId);
+}
+
+function findCardsActiveInRoom(roomId,type) {
+	if(!roomId || !type) {
+		throw new Meteor.Error("invalid_args_findcardsactiveinroom","Invalid arguments to findcardsactiveinroom",[roomId,type]);
+	}
+
+	if(!(type==="q"||type==="a")) {
+		console.warn("odd type arugment passed to findCardsActiveInRoom",type);
+	}
+
+	var room = Rooms.findOne(roomId);
+	if(!room) {
+		throw new Meteor.Error("findcardactiveinroom_room_not_found","Did not find specified room in findCardsActiveInRoom",roomId);
+	}
+
+	return Cards.find({
+		_id : {
+			$nin : room.discarded_cards
+		},
+		set : {
+			$in : room.cardsets
+		},
+		type: type
+	});
+}
 
 
 Meteor.methods({
@@ -50,6 +94,7 @@ Meteor.methods({
 			Meteor.users.update(this.userId,{
 				$set : {
 					room: roomId,
+					hand: [] //lets clear the hand to be sure
 				}
 			});
 
@@ -98,18 +143,38 @@ Meteor.methods({
 		}
 
 
-		if(room.state === "setup") {
-			Rooms.update(room._id,{
-				$set : {
-					state: "playing"
-				}
-			});
-
-			updateRoomDate(room._id);
-			updateUserDate(this.userId);
-		} else {
-			console.warn("Room tried to start while already playing");
+		if(room.state !== "setup") {
+			throw new Meteor.Error("room_invalid_state","Tried to start game while already playing");
 		}
+
+		Rooms.update(room._id,{
+			$set : {
+				state: "playing"
+			}
+		});
+
+		var users = Meteor.users.find({room:room._id}).fetch();
+		var cards = findCardsActiveInRoom(room._id,"a").fetch();
+
+
+		for(var i=0;i<users.length;i++){
+			var user = users[i];
+			for(var o=0;o<INITIAL_HAND_SIZE;o++) {
+				var card = Utils.removeRandomElementFromArray(cards);
+				if(!card) {
+					throw new Meteor.Error("room_insuficcient_cards_to_deal","Cardsets do not have enough cards to deal",room);//TODO Nicer handling of this case
+				}
+
+				dealCard(card._id,this.userId,room._id);
+			}
+
+
+		}
+
+
+		updateRoomDate(room._id);
+		updateUserDate(this.userId);
+
 
 	},
 
@@ -123,10 +188,7 @@ Meteor.methods({
 			throw new Meter.Error("discardcard_no_id_specifiec","User did not give ID for discardcard",cardId);
 		}
 
-		Rooms.update(room._id,{
-			$addToSet : {discarded_cards : cardId} //Addtoset prevents duplicates, unlike push
-		});
-
+		discardCard(cardId,room._id);
 
 		updateUserDate(Meteor.userId());
 		updateRoomDate(room._id);

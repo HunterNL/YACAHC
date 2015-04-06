@@ -18,6 +18,7 @@
 
 	{{#if in_game}}
 		{{>playingfield}}
+		{{>user_hand}}
 
 
 	{{/if}}
@@ -37,6 +38,7 @@
 </template>
 
 <template name="playingfield">
+<div id="playingfield">
 <h2>White cards</h2>
 {{#each white_cards}}
 	{{>card}}
@@ -46,6 +48,15 @@
 {{#each black_cards}}
 	{{>card}}
 {{/each}}
+</div>
+</template>
+
+<template name="user_hand">
+	<div id="user_hand">
+	{{#each user_hand_cards}}
+		{{>card}}
+	{{/each}}
+	</div>
 </template>
 
 <template name="card">
