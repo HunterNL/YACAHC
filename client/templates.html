@@ -7,23 +7,28 @@
 </template>
 
 <template name="room">
-	{{#if in_setup}}
-		{{>cardsetselection}}
-		{{#if is_admin}}
-			<button data-intent="game_start">Start</button>
-		{{else}}
-			<h3>Waiting for admin to start</h3>
+	{{#if in_other_room}}
+		{{>join_room_warning}}
+	{{else}}
+
+		{{#if in_setup}}
+			{{>cardsetselection}}
+			{{#if is_admin}}
+				<button data-intent="game_start">Start</button>
+			{{else}}
+				<h3>Waiting for admin to start</h3>
+			{{/if}}
 		{{/if}}
+
+		{{#if in_game}}
+			{{>playingfield}}
+			{{>user_hand}}
+
+
+		{{/if}}
+
+		Card count : {{card_count}}
 	{{/if}}
-
-	{{#if in_game}}
-		{{>playingfield}}
-		{{>user_hand}}
-
-
-	{{/if}}
-
-	Card count : {{card_count}}
 
 </template>
 
@@ -31,6 +36,10 @@
 	{{#each cardsets}}
 		{{>cardselection_card}}
 	{{/each}}
+</template>
+
+<template name="join_room_warning">
+	<h3>You are already in another room, leave other room and join this one?</h3> <button data-intent="room_join">Join room</button>
 </template>
 
 <template name="cardselection_card">

@@ -31,17 +31,7 @@ Router.route("/room/:roomId",function(){
 			Meteor.call("roomCreate",roomId);
 			this.render("loading")
 		} else {
-
-			//Add user if user not in room
-			if(!Utils.roomContainsUser(roomId,Meteor.userId())) {
-				console.log("Adding user to room");
-				Meteor.call("roomAddUser",roomId);
-			} else {
-				//We're ready, got a room and all relevant data and we've added the user, render the room!
-				this.render("room",{data:room});
-			}
-
-
+			this.render("room",{data:room});
 		}
 
 	//If we're not ready, render a loading template

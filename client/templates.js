@@ -16,12 +16,22 @@ Template.room.helpers({
 
 	card_count : function() {
 		return Cards.find().count();
+	},
+
+	in_other_room : function(){
+		return Meteor.user().room !== Template.currentData()._id;
 	}
 });
 
 Template.room.events({
 	"click [data-intent=game_start]" : function(e,tmp) {
 		Meteor.call("roomStartGame");
+	}
+});
+
+Template.join_room_warning.events({
+	"click [data-intent=room_join]" : function(e,tmp) {
+		Meteor.call("roomAddUser",Template.currentData()._id);
 	}
 });
 
