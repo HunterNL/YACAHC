@@ -45,6 +45,7 @@
 	height: 320px;
 	vertical-align: top;
 	margin: 10px;
+	word-wrap: break-word;
 
 	/*Border on both for identical size*/
 	border: 1px solid black;

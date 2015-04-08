@@ -165,7 +165,7 @@ Meteor.methods({
 					throw new Meteor.Error("room_insuficcient_cards_to_deal","Cardsets do not have enough cards to deal",room);//TODO Nicer handling of this case
 				}
 
-				dealCard(card._id,this.userId,room._id);
+				dealCard(card._id,user._id,room._id);
 			}
 
 
