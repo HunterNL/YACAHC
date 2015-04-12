@@ -73,6 +73,11 @@ Template.playingfield.helpers({
 				$nin : discarded_cards
 			}
 		});
+	},
+
+	black_card : function() {
+		console.log(Template.currentData());
+		return Cards.findOne(Template.currentData().black_card);
 	}
 });
 

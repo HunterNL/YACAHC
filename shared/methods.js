@@ -149,20 +149,25 @@ Meteor.methods({
 			throw new Meteor.Error("room_invalid_state","Tried to start game while already playing");
 		}
 
-		Rooms.update(room._id,{
-			$set : {
-				state: "playing"
-			}
-		});
+
 
 		var users = Meteor.users.find({room:room._id}).fetch();
-		var cards = findCardsActiveInRoom(room._id,"a").fetch();
+		var cards_white = findCardsActiveInRoom(room._id,"a").fetch();
+		var cards_black = findCardsActiveInRoom(room._id,"q").fetch();
 
+		var black_card = Utils.removeRandomElementFromArray(cards_black);
+
+		Rooms.update(room._id,{
+			$set : {
+				state: "playing",
+				black_card: black_card._id
+			}
+		});
 
 		for(var i=0;i<users.length;i++){
 			var user = users[i];
 			for(var o=0;o<INITIAL_HAND_SIZE;o++) {
-				var card = Utils.removeRandomElementFromArray(cards);
+				var card = Utils.removeRandomElementFromArray(cards_white);
 				if(!card) {
 					throw new Meteor.Error("room_insuficcient_cards_to_deal","Cardsets do not have enough cards to deal",room);//TODO Nicer handling of this case
 				}
