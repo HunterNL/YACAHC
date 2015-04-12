@@ -95,7 +95,8 @@ Meteor.methods({
 			Meteor.users.update(this.userId,{
 				$set : {
 					room: roomId,
-					hand: [] //lets clear the hand to be sure
+					hand: [], //lets clear the hand to be sure
+					cards_played_this_round: 0
 				}
 			});
 
@@ -222,6 +223,9 @@ Meteor.methods({
 		Meteor.users.update(user._id,{
 			$pull : {
 				hand : cardId
+			},
+			$inc : {
+				cards_played_this_round : 1
 			}
 		});
 

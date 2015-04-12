@@ -100,7 +100,12 @@ Template.user_hand.helpers({
 Template.user_hand.events({
 	"click .card" : function(e,tmp) {
 		cardId = this._id;
-		Meteor.call("cardPlay",cardId);
+
+		if(Meteor.user().cards_played_this_round < 1) {
+			Meteor.call("cardPlay",cardId);
+		} else {
+			console.log("Already played a card "); //TODO Handle this nicer
+		}
 	}
 });
 
