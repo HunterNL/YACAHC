@@ -76,7 +76,8 @@ Meteor.methods({
 			date_created : new Date(),
 			state: "setup",
 			cardsets : [],
-			discarded_cards : []
+			discarded_cards : [],
+			card_pile : []
 		});
 
 		//Update user last activity date
@@ -191,6 +192,40 @@ Meteor.methods({
 		discardCard(cardId,room._id);
 
 		updateUserDate(Meteor.userId());
+		updateRoomDate(room._id);
+	},
+
+	cardPlay : function(cardId) {
+		var room = Utils.getRoomFromCurrentUser();
+		var user = Meteor.user();
+
+		if(!room) {
+			throw new Meteor.Error("user_not_in_room_playcard","User needs to be in room to play a card",this.userId);
+		}
+
+		if(!cardId) {
+			throw new Meter.Error("playcard_no_id_specified","User did not give ID for play",cardId);
+		}
+
+		if(user.hand.indexOf(cardId) === -1) {
+			throw new Meteor.Error("playcard_user_doesn't have_card","User does not have given card to play",cardId);
+		}
+
+		//Add card to room pile
+		Rooms.update(room._id,{
+			$addToSet : {
+				card_pile : cardId
+			}
+		});
+
+		//And remove from user's hand
+		Meteor.users.update(user._id,{
+			$pull : {
+				hand : cardId
+			}
+		});
+
+		updateUserDate(user._id);
 		updateRoomDate(room._id);
 	}
 

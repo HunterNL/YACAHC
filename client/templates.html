@@ -22,12 +22,8 @@
 
 		{{#if in_game}}
 			{{>playingfield}}
-			{{>user_hand}}
+			{{>user_hand}}{{/if}}
 
-
-		{{/if}}
-
-		Card count : {{card_count}}
 	{{/if}}
 
 </template>
@@ -48,13 +44,7 @@
 
 <template name="playingfield">
 <div id="playingfield">
-<h2>White cards</h2>
-{{#each white_cards}}
-	{{>card}}
-{{/each}}
-
-<h2>Black cards</h2>
-{{#each black_cards}}
+{{#each card_pile}}
 	{{>card}}
 {{/each}}
 </div>

@@ -43,6 +43,14 @@ Template.playingfield.onCreated(function(){
 //a = answer = white, q=question=black
 Template.playingfield.helpers({
 
+	card_pile : function() {
+		var room = Template.currentData();
+
+		return Cards.find({
+			_id : {$in : room.card_pile}
+		});
+	},
+
 	//Find not discarded white (answer) cards
 	white_cards : function(){
 		var discarded_cards = Template.currentData().discarded_cards;
@@ -89,6 +97,13 @@ Template.user_hand.helpers({
 	}
 });
 
+Template.user_hand.events({
+	"click .card" : function(e,tmp) {
+		cardId = this._id;
+		Meteor.call("cardPlay",cardId);
+	}
+});
+
 Template.cardselection_card.helpers({
 	activeClass : function() {
 		//If room.cardsets contains this card set, return "active", so the css
@@ -109,10 +124,11 @@ Template.cardselection_card.events({
 		}
 	}
 });
-
+/*
 Template.card.events({
 	"click div" : function(e,tmp) {
 		var card = Template.currentData();
 		Meteor.call("cardDiscard",card._id) ;
 	}
 });
+*/
