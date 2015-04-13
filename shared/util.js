@@ -1,7 +1,7 @@
 Utils = (function(){ //module pattern
-
+	self = {};
 	//Helper to see if the users is already in the given room
-	this.roomContainsUser = function(roomId,userId){
+	self.roomContainsUser = function(roomId,userId){
 		return (Meteor.users.find({
 			_id : userId,
 			room : roomId
@@ -9,7 +9,7 @@ Utils = (function(){ //module pattern
 	};
 
 	//Get room object from currentlly logged in user
-	this.getRoomFromCurrentUser = function() {
+	self.getRoomFromCurrentUser = function() {
 		var roomId = Meteor.user().room;
 		if(!roomId) {return;} //If no roomID, return nil;
 
@@ -17,13 +17,13 @@ Utils = (function(){ //module pattern
 		return room; //Can be nil if nothing found
 	};
 
-	this.currentUserIsRoomOwner = function(room){
+	self.currentUserIsRoomOwner = function(room){
 		return (room.owner === Meteor.userId());
 	};
 
-	this.removeRandomElementFromArray = function(array) {
+	self.removeRandomElementFromArray = function(array) {
 		return array.splice(Math.floor(array.length * Math.random()),1)[0]; //one liner ahoy
 	};
 
-	return this;
+	return self;
 })(); //end of module
