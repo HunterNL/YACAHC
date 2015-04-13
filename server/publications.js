@@ -46,7 +46,7 @@ Meteor.publish("room_cards",function(roomId){
 
 //Publish custom user data
 Meteor.publish(null,function(){
-	return Meteor.users.find(this.userid,{
+	return Meteor.users.find(this.userId,{
 		fields : privateUserFields
 	});
 });

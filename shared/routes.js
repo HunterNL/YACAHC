@@ -29,7 +29,7 @@ Router.route("/room/:roomId",function(){
 		if(!room) {
 			//If theres no room, make a new one
 			Meteor.call("roomCreate",roomId);
-			this.render("loading")
+			this.render("loading");
 		} else {
 			this.render("room",{data:room});
 		}
