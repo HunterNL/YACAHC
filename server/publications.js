@@ -3,8 +3,9 @@ var userFields = {
 	cards_played_this_round: 1
 };
 
-var privateUserFields = userFields;
-	privateUserFields.hand = 1;
+var privateUserFields = {
+	hand : 1
+};
 
 
 Meteor.publish("room_single",function(roomId){
