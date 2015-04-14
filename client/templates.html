@@ -44,6 +44,13 @@
 
 <template name="playingfield">
 <div id="playingfield">
+{{#with czar}}
+	<h3>{{profile.username}} is the card czar!</h3>
+{{/with}}
+{{#if is_czar}}
+	<h3>You are the Card Czar!</h3>
+{{/if}}
+
 {{#with black_card}}
 	{{>card}}
 {{/with}}

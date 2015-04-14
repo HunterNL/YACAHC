@@ -43,6 +43,14 @@ Template.playingfield.onCreated(function(){
 //a = answer = white, q=question=black
 Template.playingfield.helpers({
 
+	czar : function() {
+		return Meteor.users.findOne(Template.currentData().czar);
+	},
+
+	is_czar : function() {
+		return (Meteor.userId() === Template.currentData().czar);
+	},
+
 	card_pile : function() {
 		var room = Template.currentData();
 

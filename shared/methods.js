@@ -156,11 +156,13 @@ Meteor.methods({
 		var cards_black = findCardsActiveInRoom(room._id,"q").fetch();
 
 		var black_card = Utils.removeRandomElementFromArray(cards_black);
+		var czar = Utils.randomElementFromArray(users);
 
 		Rooms.update(room._id,{
 			$set : {
 				state: "playing",
-				black_card: black_card._id
+				black_card: black_card._id,
+				czar: czar._id
 			}
 		});
 

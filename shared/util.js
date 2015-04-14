@@ -25,5 +25,9 @@ Utils = (function(){ //module pattern
 		return array.splice(Math.floor(array.length * Math.random()),1)[0]; //one liner ahoy
 	};
 
+	self.randomElementFromArray = function(array) {
+		return array[Math.floor(array.length * Math.random())];
+	};
+
 	return self;
 })(); //end of module
