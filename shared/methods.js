@@ -1,4 +1,4 @@
-var INITIAL_HAND_SIZE = 10;
+var HAND_SIZE = 10;
 
 //2 functions for easily updating last activity
 function updateUserDate(userId) {
@@ -19,7 +19,7 @@ function updateRoomDate(roomId) {
 
 //Add card to room's blacklist effectivly removing card from possible cards to draw
 function discardCard(cardId,roomId) {
-	if(!cardId || !roomId) {throw new Meteor.Error("invalid_args_discardCard","Invalid arguments to discardCard",[cardId,roomId]);}
+	if(!cardId || !roomId) {throw new Meteor.Error("invalid_args_discardCard","Invalid arguments to discardCard", "cardId"+cardId+"\nroomId:",roomId);}
 	Rooms.update(roomId,{
 		$addToSet : {discarded_cards : cardId} //addtoset prevents duplicates, unlike push
 	});
@@ -48,6 +48,69 @@ function roomAllCardsPlayed(room) {
 	return users.every(function(user){
 		return (user._id === room.czar || user.cards_played_this_round.length == room.cards_required_this_round);
 	});
+}
+
+function roomStartRound(room) {
+
+	var users = Meteor.users.find({
+		room: room._id
+	}).fetch();
+
+	var cards_white = findCardsActiveInRoom(room._id,"a").fetch();
+	var cards_black = findCardsActiveInRoom(room._id,"q").fetch();
+
+	var black_card = Utils.randomElementFromArray(cards_black);
+
+	discardCard(black_card._id,room._id); //Prevent card from being redrawn
+
+	var new_czar_index;
+
+	if(typeof room.czar_index === "undefined") {
+		new_czar_index = 0;
+	} else {
+		new_czar_index = (room.czar_index+1)%room.czar_order.length;
+	}
+
+	var new_czar = room.czar_order[new_czar_index];
+
+	//Reset cards users played
+	var q = Meteor.users.update({
+		room: room._id
+	},{
+		$set: {
+			cards_played_this_round: []
+		}
+	},{
+		multi: true
+	});
+
+	//Reset room
+	Rooms.update(room._id,{
+		$set : {
+			state: "playing",
+			black_card: black_card._id,
+			cards_required_this_round: black_card.pick,
+			czar_index: new_czar_index,
+			czar: new_czar,
+			card_pile: []
+		}
+	});
+
+
+	//(re)fill user hands to to HAND_SIZE
+	for(i=0;i<users.length;i++){
+		var user = users[i];
+		var missing_cards = 10-user.hand.length;
+		for(var o=0;o<missing_cards;o++) {
+			var card = Utils.removeRandomElementFromArray(cards_white);
+			if(!card) {
+				throw new Meteor.Error("room_insuficcient_cards_to_deal","Cardsets do not have enough cards to deal",room);//TODO Nicer handling of this case
+			}
+
+			dealCard(card._id,user._id,room._id);
+		}
+	}
+
 }
 
 function findCardsActiveInRoom(roomId,type) {
@@ -149,7 +212,7 @@ Meteor.methods({
 	}, //End of roomToggleCardSet
 
 
-	//Starts game if room is in setup
+	//Starts game if room is in setup state
 	roomStartGame : function() {
 		var room = Utils.getRoomFromCurrentUser();
 		if(!room) {
@@ -166,42 +229,26 @@ Meteor.methods({
 		}
 
 
-
 		var users = Meteor.users.find({room:room._id}).fetch();
-		var cards_white = findCardsActiveInRoom(room._id,"a").fetch();
-		var cards_black = findCardsActiveInRoom(room._id,"q").fetch();
+		var czar_order = []; //Array with MongoIDs that determine the order of czar-ing
 
-		var black_card = Utils.removeRandomElementFromArray(cards_black);
-		var czar = Utils.randomElementFromArray(users);
+		for(var i=0;i<users.length;i++) {
+			czar_order.push(users[i]._id); //Populate czar_order with userIds
+		}
 
 		Rooms.update(room._id,{
 			$set : {
-				state: "playing",
-				black_card: black_card._id,
-				cards_required_this_round: black_card.pick,
-				czar: czar._id
+				czar_order : czar_order,
 			}
 		});
 
-		for(var i=0;i<users.length;i++){
-			var user = users[i];
-			for(var o=0;o<INITIAL_HAND_SIZE;o++) {
-				var card = Utils.removeRandomElementFromArray(cards_white);
-				if(!card) {
-					throw new Meteor.Error("room_insuficcient_cards_to_deal","Cardsets do not have enough cards to deal",room);//TODO Nicer handling of this case
-				}
+		room.czar_order=czar_order;//Gotta give this to roomStartRound as well!
 
-				dealCard(card._id,user._id,room._id);
-			}
-
-
-		}
-
+		//Start a new round from picking/timeout state
+		roomStartRound(room);
 
 		updateRoomDate(room._id);
 		updateUserDate(this.userId);
-
-
 	},
 
 	cardDiscard : function(cardId) {
@@ -314,7 +361,7 @@ Meteor.methods({
 		});
 
 		//TODO reset round
-
+		roomStartRound(room);
 
 	}
 

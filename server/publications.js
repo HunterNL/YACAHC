@@ -5,7 +5,8 @@ var userFields = {
 };
 
 var privateUserFields = {
-	hand : 1
+	hand : 1,
+	cards_played_this_round: 1
 };
 
 
