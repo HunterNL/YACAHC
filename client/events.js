@@ -13,8 +13,10 @@ Template.join_room_warning.events({
 Template.user_hand.events({
 	"click .card" : function(e,tmp) {
 		cardId = this._id;
+		var room = Template.currentData();
 
-		if(Meteor.user().cards_played_this_round < 1) {
+
+		if(Meteor.user().cards_played_this_round < room.cards_required_this_round) {
 			Meteor.call("cardPlay",cardId);
 		} else {
 			console.log("Already played a card "); //TODO Handle this nicer

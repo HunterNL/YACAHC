@@ -63,7 +63,7 @@ body {
 
 	/*Border on both for identical size*/
 	box-sizing: border-box;
-	border: 0.1vw solid black;
+	border: 1px solid black;
 	border-radius: 5px;
 }
 

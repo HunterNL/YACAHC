@@ -1,6 +1,7 @@
 var userFields = {
 	room: 1,
-	cards_played_this_round: 1
+	cards_played_this_round: 1,
+	profile: 1
 };
 
 var privateUserFields = {

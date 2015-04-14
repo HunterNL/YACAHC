@@ -35,6 +35,21 @@ function dealCard(cardId,userId,roomId) {
 	discardCard(cardId,roomId);
 }
 
+//Returns true if all users played all required cards
+function roomAllCardsPlayed(room) {
+	if(!room) {
+		throw new Meteor.Error("invalid_args_roomallcardsplayed",room);
+	}
+
+	var users = Meteor.users.find({
+		room: room._id
+	}).fetch();
+
+	return users.every(function(user){
+		return (user._id === room.czar || user.cards_played_this_round == room.cards_required_this_round);
+	});
+}
+
 function findCardsActiveInRoom(roomId,type) {
 	if(!roomId || !type) {
 		throw new Meteor.Error("invalid_args_findcardsactiveinroom","Invalid arguments to findcardsactiveinroom",[roomId,type]);
@@ -162,6 +177,7 @@ Meteor.methods({
 			$set : {
 				state: "playing",
 				black_card: black_card._id,
+				cards_required_this_round: black_card.pick,
 				czar: czar._id
 			}
 		});
@@ -224,6 +240,14 @@ Meteor.methods({
 			//TODO visual effect on the client
 		}
 
+		if(user.cards_played_this_round >= room.cards_required_this_round) {
+			throw new Meteor.Error("playcard_too_many_cards_played","User tried to play more cards than allowed",user);
+		}
+
+		if(room.state !== "playing") {
+			throw new Meteor.Error("playcard_invalid_room_state","User tried to play card when room state doesn't allow",[user,room]);
+		}
+
 		//Add card to room pile
 		Rooms.update(room._id,{
 			$addToSet : {
@@ -240,6 +264,14 @@ Meteor.methods({
 				cards_played_this_round : 1
 			}
 		});
+
+		if(roomAllCardsPlayed(room)) {
+			Rooms.update(room._id,{
+				$set : {
+					state: "picking",
+				}
+			});
+		}
 
 		updateUserDate(user._id);
 		updateRoomDate(room._id);
