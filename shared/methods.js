@@ -46,7 +46,7 @@ function roomAllCardsPlayed(room) {
 	}).fetch();
 
 	return users.every(function(user){
-		return (user._id === room.czar || user.cards_played_this_round == room.cards_required_this_round);
+		return (user._id === room.czar || user.cards_played_this_round.length == room.cards_required_this_round);
 	});
 }
 
@@ -110,8 +110,9 @@ Meteor.methods({
 			Meteor.users.update(this.userId,{
 				$set : {
 					room: roomId,
-					hand: [], //lets clear the hand to be sure
-					cards_played_this_round: 0
+					hand: [], //CLear hand
+					cards_played_this_round: [],
+					awesome_points: 0,
 				}
 			});
 
@@ -240,7 +241,7 @@ Meteor.methods({
 			//TODO visual effect on the client
 		}
 
-		if(user.cards_played_this_round >= room.cards_required_this_round) {
+		if(user.cards_played_this_round.length >= room.cards_required_this_round) {
 			throw new Meteor.Error("playcard_too_many_cards_played","User tried to play more cards than allowed",user);
 		}
 
@@ -258,11 +259,11 @@ Meteor.methods({
 		//And remove from user's hand
 		Meteor.users.update(user._id,{
 			$pull : {
-				hand : cardId
+				hand : cardId //Remove from hand
 			},
-			$inc : {
-				cards_played_this_round : 1
-			}
+			$push : {
+				cards_played_this_round : cardId //Keep track who played what
+			},
 		});
 
 		if(roomAllCardsPlayed(room)) {
@@ -275,6 +276,46 @@ Meteor.methods({
 
 		updateUserDate(user._id);
 		updateRoomDate(room._id);
+	},
+
+	cardPick : function(cardId) {
+		var room = Utils.getRoomFromCurrentUser();
+		var user = Meteor.user();
+
+		if(!room) {
+			throw new Meteor.Error("user_not_in_room_pickcard","User needs to be in room to play a card",this.userId);
+		}
+
+		if(!cardId) {
+			throw new Meter.Error("pickcard_no_id_specified","User did not give ID for play",cardId);
+		}
+
+		if(room.card_pile.indexOf(cardId) === -1) {
+			throw new Meteor.Error("pickcard_doesn't have_card","card pile doesn't contain given card",cardId);
+		}
+
+		if(user._id !== room.czar) {
+			throw new Meteor.Error("pickcard_user_isnt_czar","User is not czar but called cardpick methods",[room,user]);
+			//TODO visual effect on the client
+		}
+
+		if(room.state !== "picking") {
+			throw new Meteor.Error("cardpick_invalid_room_state","Czar tried to pick card when room state doesn't allow",[user,room]);
+		}
+
+		//Award awesome point to winner
+		console.log("Awarding awesome point in room",room._id);
+		Meteor.users.update({
+			cards_played_this_round : cardId
+		},{
+			$inc : {
+				awesome_points : 1
+			}
+		});
+
+		//TODO reset round
+
+
 	}
 
 
