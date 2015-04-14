@@ -219,6 +219,11 @@ Meteor.methods({
 			throw new Meteor.Error("playcard_user_doesn't have_card","User does not have given card to play",cardId);
 		}
 
+		if(user._id === room.czar) {
+			throw new Meteor.Error("playcard_user_is_czar","User is czar but called cardPlay methods",[room,user]);
+			//TODO visual effect on the client
+		}
+
 		//Add card to room pile
 		Rooms.update(room._id,{
 			$addToSet : {
