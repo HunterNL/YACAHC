@@ -73,7 +73,9 @@
 <template name="card">
 <div class="card {{type}}">
 <p class="text">{{{text}}}</p>
-
+{{#if pick}}
+<p class="pick"> Pick {{pick}} </p>
+{{/if}}
 <p class="tag">{{set}}</p>
 </div>
 </template>
