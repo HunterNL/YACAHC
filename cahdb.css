@@ -58,13 +58,21 @@ body {
 	width: 9vw;
 	height: 12.8vw;
 	vertical-align: top;
-	margin: 10px 0.39vw; /*TODO Figure out mysterious rightside margin*/
+	margin: 10px 0.39vw;
 	word-wrap: break-word;
+
+	perspective: 600px;
+	transform: rotateY(0deg) translateZ(10px);
+	transition: transform 1s;
 
 	/*Border on both for identical size*/
 	box-sizing: border-box;
 	border: 1px solid black;
 	border-radius: 5px;
+}
+
+.card:hover {
+	transform: rotateY(180deg) translateZ(100px);
 }
 
 .card.a {
