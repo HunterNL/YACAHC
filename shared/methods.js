@@ -18,21 +18,22 @@ function updateRoomDate(roomId) {
 }
 
 //Add card to room's blacklist effectivly removing card from possible cards to draw
-function discardCard(cardId,roomId) {
-	if(!cardId || !roomId) {throw new Meteor.Error("invalid_args_discardCard","Invalid arguments to discardCard", "cardId"+cardId+"\nroomId:",roomId);}
+function discardCards(cards,roomId) {
+	if(!cards || !roomId) {throw new Meteor.Error("invalid_args_discardCards","Invalid arguments to discardCards", "cards:"+cards+"\nroomId:",roomId);}
+
 	Rooms.update(roomId,{
-		$addToSet : {discarded_cards : cardId} //addtoset prevents duplicates, unlike push
+		$addToSet : {discarded_cards : {$each: cards}} //addtoset prevents duplicates, unlike push
 	});
 }
 
 //Deal a card to a user, also discard so its not drawn again
-function dealCard(cardId,userId,roomId) {
-	if(!cardId || !userId || !roomId) {throw new Meteor.Error("invalid_args_dealcard","Invalid arugments to dealcard",[cardId,userId,roomId]);}
+function dealCards(cards,userId,roomId) {
+	if(!cards || !userId || !roomId) {throw new Meteor.Error("invalid_args_dealcard","Invalid arugments to dealcard",[cardId,userId,roomId]);}
 	Meteor.users.update(userId,{
-		$addToSet : {hand:cardId}
+		$addToSet : {hand: {$each : cards}}
 	});
 
-	discardCard(cardId,roomId);
+	discardCards(cards,roomId);
 }
 
 //Returns true if all users played all required cards
@@ -61,7 +62,8 @@ function roomStartRound(room) {
 
 	var black_card = Utils.randomElementFromArray(cards_black);
 
-	discardCard(black_card._id,room._id); //Prevent card from being redrawn
+	discardCards([black_card._id],
+		room._id); //Prevent card from being redrawn
 
 	var new_czar_index;
 
@@ -98,17 +100,18 @@ function roomStartRound(room) {
 
 
 	//(re)fill user hands to to HAND_SIZE
-	for(i=0;i<users.length;i++){
+	for(var i=0;i<users.length;i++){
 		var user = users[i];
 		var missing_cards = 10-user.hand.length;
+		var cards_to_deal = [];
 		for(var o=0;o<missing_cards;o++) {
 			var card = Utils.removeRandomElementFromArray(cards_white);
 			if(!card) {
 				throw new Meteor.Error("room_insuficcient_cards_to_deal","Cardsets do not have enough cards to deal",room);//TODO Nicer handling of this case
 			}
-
-			dealCard(card._id,user._id,room._id);
+			cards_to_deal.push(card._id);
 		}
+		dealCards(cards_to_deal,user._id,room._id);
 	}
 
 }
@@ -250,7 +253,7 @@ Meteor.methods({
 		updateRoomDate(room._id);
 		updateUserDate(this.userId);
 	},
-
+	/*
 	cardDiscard : function(cardId) {
 		var room = Utils.getRoomFromCurrentUser();
 		if(!room) {
@@ -265,7 +268,7 @@ Meteor.methods({
 
 		updateUserDate(Meteor.userId());
 		updateRoomDate(room._id);
-	},
+	},*/
 
 	cardPlay : function(cardId) {
 		var room = Utils.getRoomFromCurrentUser();

@@ -62,8 +62,7 @@ body {
 	word-wrap: break-word;
 
 	perspective: 600px;
-	transform: rotateY(0deg) translateZ(10px);
-	transition: transform 1s;
+	transition: transform .2s;
 
 	/*Border on both for identical size*/
 	box-sizing: border-box;
@@ -72,7 +71,7 @@ body {
 }
 
 .card:hover {
-	transform: rotateY(180deg) translateZ(100px);
+	transform: scale(1.15);
 }
 
 .card.a {
