@@ -104,3 +104,9 @@ Template.cardselection_card.helpers({
 		return ((Meteor.userId()==Template.parentData().owner)?"admin":"");
 	}
 });
+
+Template.card.helpers({
+	flipped : function() {
+		return ((Template.parentData().state !== "picking" && this.type=="a")?"flipped":"");
+	}
+});
