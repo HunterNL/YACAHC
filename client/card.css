@@ -53,6 +53,7 @@
 
 .card>div.back {
 	transform: rotateY(180deg);
+	backface-visibility: hidden;
 }
 
 #playingfield .card.flipped {
