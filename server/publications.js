@@ -11,11 +11,18 @@ var privateUserFields = {
 
 
 Meteor.publish("room_single",function(roomId){
-	return Rooms.find(roomId);
+	roomId = roomId || Meteor.users.findOne(this.userId).room;
+	return Rooms.find(roomId,{
+		fields: {
+			date_last_activity:0,
+			date_created:0
+		}
+	});
 });
 
 //All users in the given room
 Meteor.publish("room_users",function(roomId){
+	roomId = roomId || Meteor.users.findOne(this.userId).room;
 	return Meteor.users.find({
 		room: roomId
 	},{
@@ -25,7 +32,7 @@ Meteor.publish("room_users",function(roomId){
 
 //All cards used in given room
 Meteor.publish("room_cards",function(roomId){
-
+	roomId = roomId || Meteor.users.findOne(this.userId).room;
 	if(!roomId) {
 		throw new Meteor.Error("invalid_arguments_roomcards","Invalid arguments to room_cards publish",roomId);
 	}

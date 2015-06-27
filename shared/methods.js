@@ -57,10 +57,19 @@ function roomStartRound(room) {
 		room: room._id
 	}).fetch();
 
-	var cards_white = findCardsActiveInRoom(room._id,"a").fetch();
-	var cards_black = findCardsActiveInRoom(room._id,"q").fetch();
+	var cards_white_q = findCardsActiveInRoom(room._id,"a");
+	var cards_black_q = findCardsActiveInRoom(room._id,"q");
+
+	var cards_white = cards_white_q.fetch();
+	var cards_black = cards_black_q.fetch();
+
+	console.log("Car Counts q,a",cards_black_q.count(),cards_white_q.count());
 
 	var black_card = Utils.randomElementFromArray(cards_black);
+
+	if(typeof black_card==="undefined") {
+		throw new Meteor.Error("Unable to find black card");
+	}
 
 	discardCards([black_card._id],
 		room._id); //Prevent card from being redrawn
@@ -366,6 +375,15 @@ Meteor.methods({
 		//TODO reset round
 		roomStartRound(room);
 
+	},
+
+	setUsername : function(name) {
+		var q = Meteor.users.update(this.userId,{
+			$set : {
+				"profile.username" : name
+			}
+		});
+		console.log("Set username of",q,"users to",name);
 	}
 
 

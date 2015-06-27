@@ -110,3 +110,13 @@ Template.card.helpers({
 		return ((Template.parentData().state !== "picking" && this.type=="a")?"flipped":"");
 	}
 });
+
+Template.user_list.helpers({
+	users : function() {
+		var roomId = (Template.parentData()._id);
+		console.log(Template.parentData(),roomId)
+		return Meteor.users.find({
+			room : roomId
+		});
+	}
+});

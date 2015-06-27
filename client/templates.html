@@ -7,10 +7,11 @@
 </template>
 
 <template name="room">
-	{{state}}
+
 	{{#if in_other_room}}
 		{{>join_room_warning}}
 	{{else}}
+		{{>user_list}}
 
 		{{#if in_setup}}
 			{{>cardsetselection}}
@@ -23,8 +24,8 @@
 
 		{{#if in_game}}
 			{{>playingfield}}
-			{{>user_hand}}{{/if}}
-
+			{{>user_hand}}
+		{{/if}}
 	{{/if}}
 
 </template>
@@ -71,7 +72,7 @@
 </template>
 
 <template name="card">
-<div class="cardcontainer"> 
+<div class="cardcontainer">
 <div class="card {{type}} {{flipped}}">
 	<div class="front">
 	<p class="text">{{{text}}}</p>
@@ -84,4 +85,10 @@
 	<div class="back"></div>
 </div>
 </div>
+</template>
+
+<template name="user_list">
+	{{#each users}}
+		<p>{{profile.username}}</p>
+	{{/each}}
 </template>
