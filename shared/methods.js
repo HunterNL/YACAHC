@@ -111,7 +111,7 @@ function roomStartRound(room) {
 	//(re)fill user hands to to HAND_SIZE
 	for(var i=0;i<users.length;i++){
 		var user = users[i];
-		var missing_cards = 10-user.hand.length;
+		var missing_cards = HAND_SIZE-user.hand.length;
 		var cards_to_deal = [];
 		for(var o=0;o<missing_cards;o++) {
 			var card = Utils.removeRandomElementFromArray(cards_white);
