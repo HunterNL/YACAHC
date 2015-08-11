@@ -1,27 +1,35 @@
 //Default home route
-Router.route("/",function(){
-	this.render("home");
-},{
+FlowRouter.route("/",{
+	action : function () {
+	BlazeLayout.render("home");
+},
 	name:"home"
 });
 
 //Main room route
-Router.route("/room/:roomId",function(){
-	console.log("Running room route",this.params);
-	var roomId = (this.params.roomId);
+FlowRouter.route("/room/:roomId",{
 
-	//TODO Minimize reruns
-	//If theres no id given, return to homepage //TODO: Make room instead
-	if(!roomId) {
-		console.log("No roomID, going home");
-		this.render("home");
-	}
+	action : function () {
+		console.log("Running room route",this.params);
+		var roomId = FlowRouter.getParam("roomId");
 
+		//TODO Minimize reruns
+		//If theres no id given, return to homepage //TODO: Make room instead
+		if(!roomId) {
+			console.log("No roomID, going home");
+			//FlowRouter.go("home");
+			return;
+		} else {
+			BlazeLayout.render("room_page");
+		}
+	},
 
-	this.wait(Meteor.subscribe("room_single",roomId));
-	this.wait(Meteor.subscribe("room_users",roomId));
+	name : "room"
+
+	//this.wait(Meteor.subscribe("room_single",roomId));
+	//this.wait(Meteor.subscribe("room_users",roomId));
 	//TODO: Don't wait, show fancy animations
-
+/*
 	if(this.ready()) {
 		var room = Rooms.findOne(roomId);
 		console.log("Got room",room);
@@ -38,6 +46,5 @@ Router.route("/room/:roomId",function(){
 	} else {
 		this.render("loading");
 	}
-},{
-	name:"room"
+	*/
 });

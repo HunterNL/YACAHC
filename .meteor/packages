@@ -5,9 +5,9 @@
 # but you can also edit it by hand.
 
 meteor-platform
-insecure
 http
-iron:router
 accounts-base
 accounts-password
 artwells:accounts-guest
+kadira:flow-router
+kadira:blaze-layout
