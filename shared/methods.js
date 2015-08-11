@@ -159,21 +159,27 @@ Meteor.methods({
 			throw new Meteor.Error("duplicate_room_id","Room with id "+roomId+" already exists");
 		}
 
-		//Insert the new room
-		Rooms.insert({
-			_id : roomId,
+		var room = {
 			owner: this.userId,
 			date_created : new Date(),
 			state: "setup",
 			cardsets : [],
 			discarded_cards : [],
 			card_pile : []
-		});
+		};
+
+		if(typeof roomId === "string" && roomId!=="") {
+			room._id = roomId;
+		}
+
+		//Insert the new room
+		var newId = Rooms.insert(room);
 
 		//Update user last activity date
 		updateUserDate(this.userId);
 		updateRoomDate(roomId);
 
+		return newId;
 	},
 
 	//Add current user to given room

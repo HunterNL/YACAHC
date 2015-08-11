@@ -1,8 +1,8 @@
 //Default home route
 FlowRouter.route("/",{
 	action : function () {
-	BlazeLayout.render("home");
-},
+		BlazeLayout.render("home_page");
+	},
 	name:"home"
 });
 
