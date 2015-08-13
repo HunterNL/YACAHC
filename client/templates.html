@@ -4,29 +4,6 @@
 	Loading
 </template>
 
-<template name="room">
-
-	{{#if in_other_room}}
-		{{>join_room_warning}}
-	{{else}}
-		{{>user_list}}
-
-		{{#if in_setup}}
-			{{>cardsetselection}}
-			{{#if is_admin}}
-				<button data-intent="game_start">Start</button>
-			{{else}}
-				<h3>Waiting for admin to start</h3>
-			{{/if}}
-		{{/if}}
-
-		{{#if in_game}}
-			{{>playingfield}}
-			{{>user_hand}}
-		{{/if}}
-	{{/if}}
-
-</template>
 
 <template name="cardsetselection">
 	{{#each cardsets}}
@@ -83,10 +60,4 @@
 	<div class="back"></div>
 </div>
 </div>
-</template>
-
-<template name="user_list">
-	{{#each users}}
-		<p>{{profile.username}}</p>
-	{{/each}}
 </template>

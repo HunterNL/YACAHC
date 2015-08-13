@@ -10,7 +10,6 @@ FlowRouter.route("/",{
 FlowRouter.route("/room/:roomId",{
 
 	action : function () {
-		console.log("Running room route",this.params);
 		var roomId = FlowRouter.getParam("roomId");
 
 		//TODO Minimize reruns

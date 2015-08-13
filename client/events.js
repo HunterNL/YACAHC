@@ -1,8 +1,3 @@
-Template.room.events({
-	"click [data-intent=game_start]" : function(e,tmp) {
-		Meteor.call("roomStartGame");
-	}
-});
 
 Template.join_room_warning.events({
 	"click [data-intent=room_join]" : function(e,tmp) {

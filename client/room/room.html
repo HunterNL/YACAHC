@@ -1,0 +1,17 @@
+<template name="room">
+	{{>user_list id=_id}}
+
+	{{#if in_setup}}
+		{{>cardsetselection}}
+		{{#if is_admin}}
+			<button data-intent="game_start">Start</button>
+		{{else}}
+			<h3>Waiting for admin to start</h3>
+		{{/if}}
+	{{/if}}
+
+	{{#if in_game}}
+		{{>playingfield}}
+		{{>user_hand}}
+	{{/if}}
+</template>

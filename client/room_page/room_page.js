@@ -12,5 +12,8 @@ Template.room_page.events({
 });
 
 Template.room_page.helpers({
-
+	roomdata : function () {
+		console.log("roomdata called");
+		return Rooms.find(FlowRouter.getParam("roomId")).fetch()[0];
+	}
 });
