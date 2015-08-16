@@ -1,0 +1,16 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+#__blaze-root {
+	margin: 0;
+	padding: 0;
+}
+
+.user_list p {
+	display: inline-block;
+	box-shadow: inset 0 -5px 0 0 #1577be;
+	padding: 10px;
+	margin: 0 0 10px 0;
+}

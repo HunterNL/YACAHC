@@ -1,5 +1,5 @@
 Template.room.onCreated(function(){
-	console.log("room_data",this.data);
+	console.log("room_data",this);
 });
 
 Template.room.onRendered(function(){

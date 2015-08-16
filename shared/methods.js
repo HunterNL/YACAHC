@@ -168,7 +168,7 @@ Meteor.methods({
 			card_pile : []
 		};
 
-		if(typeof roomId === "string" && roomId!=="") {
+		if(typeof roomId === "string" && roomId !== "") {
 			room._id = roomId;
 		}
 
@@ -199,6 +199,8 @@ Meteor.methods({
 
 			updateUserDate(this.userId);
 			updateRoomDate(roomId);
+		} else {
+			throw new Meteor.error("user_already_in_room");
 		}
 	},
 

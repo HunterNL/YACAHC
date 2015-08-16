@@ -11,6 +11,8 @@ var privateUserFields = {
 
 
 Meteor.publish("room_single",function(roomId){
+	check(roomId,String);
+
 	roomId = roomId || Meteor.users.findOne(this.userId).room;
 	return Rooms.find(roomId,{
 		fields: {
@@ -22,6 +24,8 @@ Meteor.publish("room_single",function(roomId){
 
 //All users in the given room
 Meteor.publish("room_users",function(roomId){
+	check(roomId,String);
+
 	roomId = roomId || Meteor.users.findOne(this.userId).room;
 	return Meteor.users.find({
 		room: roomId
@@ -32,6 +36,8 @@ Meteor.publish("room_users",function(roomId){
 
 //All cards used in given room
 Meteor.publish("room_cards",function(roomId){
+	check(roomId,String);
+	
 	roomId = roomId || Meteor.users.findOne(this.userId).room;
 	if(!roomId) {
 		throw new Meteor.Error("invalid_arguments_roomcards","Invalid arguments to room_cards publish",roomId);

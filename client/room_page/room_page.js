@@ -1,6 +1,7 @@
 Template.room_page.onCreated(function(){
-	this.subscribe("room_single");
-	this.subscribe("room_users");
+	var roomId = FlowRouter.getParam("roomId");
+	this.subscribe("room_single",roomId);
+	this.subscribe("room_users",roomId);
 });
 
 Template.room_page.onRendered(function(){
@@ -13,7 +14,8 @@ Template.room_page.events({
 
 Template.room_page.helpers({
 	roomdata : function () {
-		console.log("roomdata called");
-		return Rooms.find(FlowRouter.getParam("roomId")).fetch()[0];
+		var roomId = FlowRouter.getParam("roomId");
+		console.log("roomdata called",roomId);
+		return Rooms.find(roomId).fetch()[0];
 	}
 });
