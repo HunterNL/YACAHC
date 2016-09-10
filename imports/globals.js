@@ -1,0 +1,1 @@
+export var HAND_SIZE=10;
