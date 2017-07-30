@@ -1,6 +1,7 @@
 import requireDocument from "/imports/require_document.js";
-import Players from "/imports/player.js";
+import Players from "/imports/players.js";
 import {HAND_SIZE} from "/imports/globals.js";
+import Cards from "/imports/cards.js";
 
 var Rooms = (function(){
   var collection = new Mongo.Collection("rooms");
@@ -45,13 +46,14 @@ var Rooms = (function(){
   }
   
   function hasCardSet(room,cardSet) {
+    console.log(room);
     return room.cardSets.includes(cardSet);
   }
   
-  function addCardSet(roomId,cardSet) {
+  function addCardSet(roomId,cardSetId) {
     collection.update({_id:roomId},{
       $push : {
-        cardSets : setId
+        cardSets : cardSetId
       }
     });
   }
@@ -75,7 +77,7 @@ var Rooms = (function(){
   }
   
   function requireValidRoundStartState(room) {
-    if(!["startup","timeout"].includes(room.state)) {
+    if(!["setup","timeout"].includes(room.state)) {
       throw new Meteor.Error("room_invalid_state","Room not in state to state to start",{state:room.state});
     }
   }
@@ -88,13 +90,18 @@ var Rooms = (function(){
   
   
   function findMissingHandCount(players) {
-    return layers.reduce(function (last,cur) {
+    return players.reduce(function (last,cur) {
       return last+(HAND_SIZE-cur.hand.lenght);
     },0);
   }
   
   function createHandForPlayer(missingCardCount,cardsToPick) {
+    var hand = [];
+    _.times(missingCardCount,function () {
+      hand.push(removeRandomElementFromArray(cardsToPick));
+    });
     
+    return {player,hand};
   }
   
   function dealCards(room,players) {
@@ -108,8 +115,15 @@ var Rooms = (function(){
     
     var cardsToDeal = players.map(function (player) {
       var missingCardCount = HAND_SIZE-player.hand.length;
-      return createHandForPlayer(missingCardCount,cards);
-    })
+      return createHandForPlayer(player,missingCardCount,cards);
+    });
+    
+   cardsToDeal.map(function (entry) {
+     var {player,hand} = entry;
+     
+     Players.dealHand(player._id,hand);
+   });
+    
     
   }
   
@@ -119,11 +133,7 @@ var Rooms = (function(){
     
     requireValidRoundStartState(room);
     
-    dealCards(room,players)
-    
-    
-    
-    
+    dealCards(room,players);
     
     collection.update({_id:roomId},{
       $set : {
@@ -132,13 +142,23 @@ var Rooms = (function(){
     });
     
   }
+  function find(...args) {
+    return collection.find(...args);
+  }
+  
+  function findOne(...args) {
+    return collection.findOne(...args);
+  }
   
   return {
     _collection:collection,
     create,
     require,
     toggleCardSet,
-    startRound
+    startRound,
+    addUser,
+    find,
+    findOne
   };
   
 }());

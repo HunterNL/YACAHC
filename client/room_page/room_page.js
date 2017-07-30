@@ -1,3 +1,5 @@
+import Rooms from "/imports/rooms.js";
+
 Template.room_page.onCreated(function(){
 	var roomId = FlowRouter.getParam("roomId");
 	this.subscribe("room_single",roomId);

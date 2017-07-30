@@ -35,8 +35,9 @@ Template.user_hand.events({
 
 Template.cardselection_card.events({
 	"click .cardsetselection" : function(e,tmp) {
-		if(Meteor.userId() === Template.parentData().owner) {
-			Meteor.call("roomToggleCardSet",Template.currentData()._id);
-		}
+		var userId = Meteor.userId();
+		var room = Template.parentData();
+		var cardSet = this;
+		Meteor.call("roomToggleCardSet",room._id,cardSet._id);
 	}
 });

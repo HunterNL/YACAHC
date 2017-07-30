@@ -21,6 +21,14 @@ var Players = (function(){
     return collection.insert(player);
   }
   
+  function dealHand(playerId,cards) {
+    require(playerId);
+    collection.update({_id:playerId},{
+      $addToSet : {hand: {$each : cards}}
+    });
+    
+  }
+  
   function findOne(...args) {
     return collection.findOne(...args);
   }
@@ -31,7 +39,10 @@ var Players = (function(){
   
   return {
     _collection : collection,
-    create
+    dealHand,
+    create,
+    find,
+    findOne
   };
 
   

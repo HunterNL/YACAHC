@@ -8,7 +8,7 @@ Template.room.onRendered(function(){
 
 Template.room.events({
 	"click [data-intent=game_start]" : function(e,tmp) {
-		Meteor.call("roomStartGame");
+		Meteor.call("roomStartGame",this._id);
 	}
 });
 

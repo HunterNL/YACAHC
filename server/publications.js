@@ -1,3 +1,5 @@
+import Rooms from "/imports/rooms.js";
+
 var userFields = {
 	room: 1,
 	profile: 1,
@@ -49,11 +51,11 @@ Meteor.publish("room_cards",function(roomId){
 		throw new Meteor.Error("room_cards_no_room_found","room_cards publish did not find a room with given roomId",roomId);
 	}
 
-	var cardsets = room.cardsets;
+	var cardSets = room.cardSets;
 
 	return Cards.find({
 		set : {
-			$in : cardsets
+			$in : cardSets
 		}
 	});
 

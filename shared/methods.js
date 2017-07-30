@@ -1,3 +1,6 @@
+import Rooms from "/imports/rooms.js";
+import Players from "/imports/players.js";
+
 var HAND_SIZE = 10;
 
 //2 functions for easily updating last activity
@@ -153,87 +156,29 @@ function findCardsActiveInRoom(roomId,type) {
 
 Meteor.methods({
 	//Create a new room with given ID
-	roomCreate : function(roomId) {
-
-		if(Rooms.findOne(roomId)){
-			throw new Meteor.Error("duplicate_room_id","Room with id "+roomId+" already exists");
+	roomCreate : function() {
+		if(!this.userId) {
+			throw new Meteor.Error("room_create_no_userid");
 		}
-
-		var room = {
-			owner: this.userId,
-			date_created : new Date(),
-			state: "setup",
-			cardsets : [],
-			discarded_cards : [],
-			card_pile : []
-		};
-
-		if(typeof roomId === "string" && roomId !== "") {
-			room._id = roomId;
-		}
-
-		//Insert the new room
-		var newId = Rooms.insert(room);
-
-		//Update user last activity date
-		updateUserDate(this.userId);
-		updateRoomDate(roomId);
-
-		return newId;
+		
+		return Rooms.create(this.userId);
 	},
 
 	//Add current user to given room
 	roomAddUser : function(roomId) {
-		if(!Utils.roomContainsUser(roomId,this.userId)) {
-
-			console.log("Adding user",this.userId,"to room",roomId);
-
-			Meteor.users.update(this.userId,{
-				$set : {
-					room: roomId,
-					hand: [], //CLear hand
-					cards_played_this_round: [],
-					awesome_points: 0,
-				}
-			});
-
-			updateUserDate(this.userId);
-			updateRoomDate(roomId);
-		} else {
-			throw new Meteor.error("user_already_in_room");
-		}
+		return Rooms.addUser(roomId,this.userId);
 	},
 
-	roomToggleCardSet : function(setId) {
-		var room = Utils.getRoomFromCurrentUser();
-		var roomId = room._id;
-
-		if(room.cardsets.indexOf(setId) === -1) {
-			//If cardset ins't used, add it
-			Rooms.update(roomId,{
-				$push : {
-					cardsets : setId
-				}
-			});
-
-		} else {
-			//If cardset IS used, remove it
-
-			Rooms.update(roomId,{
-				$pull : {
-					cardsets: setId
-				}
-			});
-		}
-
-		updateUserDate(this.userId);
-		updateRoomDate(roomId);
-
+	roomToggleCardSet : function(roomId,setId) {
+		Rooms.toggleCardSet(roomId,setId);
 	}, //End of roomToggleCardSet
 
 
 	//Starts game if room is in setup state
-	roomStartGame : function() {
+	roomStartGame : function(roomId) {
+		Rooms.startRound(roomId);
+		return;
+		
 		var room = Utils.getRoomFromCurrentUser();
 		if(!room) {
 			throw new Meteor.Error("invalid_room_start","User without room tried to start a game",Meteor.user());

@@ -73,7 +73,7 @@ Template.cardselection_card.helpers({
 	activeClass : function() {
 		//If room.cardsets contains this card set, return "active", so the css
 		//	can make look active
-		return ((Template.parentData().cardsets.indexOf(Template.currentData()._id) > -1)?"active":"");
+		return ((Template.parentData().cardSets.indexOf(Template.currentData()._id) > -1)?"active":"");
 	},
 
 	adminClass : function() {
